@@ -101,6 +101,8 @@ fetch('movies_nows.json')
     .then((response) => response.json())
     .then((data) => {
         for (let i = 0; i < data.length; i++) {
+            let date = JSON.stringify(data[i].release);
+            let release = date.slice(10, 20);
             let film = new Film(
                 data[i].beschrijving,
                 data[i].duur,
@@ -108,8 +110,8 @@ fetch('movies_nows.json')
                 data[i].foto,
                 data[i].rating,
                 data[i].regisseur,
-                data[i].release,
-                data[i].titel ,
+                release,
+                data[i].titel,
             );
             filmCollectie.voegFilmToe(film);
             if (data[i].cast) {
@@ -125,16 +127,41 @@ fetch('movies_nows.json')
                 }
             }
         }
+        let films = filmCollectie.getFilms();
+        let filmArray = 0;
+        let vorige = document.getElementById("vorige");
+        let volgende = document.getElementById("volgende");
+        let cast = films[filmArray].getCast();
+        let genres = films[filmArray].getGenres();
+        let ul = document.createElement("ul");
+        document.getElementById("titel").innerHTML = films[filmArray].getTitel() + "<small>(" + films[filmArray].getFilmNr() + ")</small>";
+        document.getElementById("foto").src = "movies/" + films[filmArray].getFoto();
+        document.getElementById("foto").alt = films[filmArray].getTitel();
+        document.getElementById("beschrijving").innerHTML = films[filmArray].getBeschrijving();
+        document.getElementById("regisseur").innerHTML = films[filmArray].getRegisseur();
+        document.getElementById("duurtijd").innerHTML = films[filmArray].getDuur();
+        document.getElementById("release").innerHTML = films[filmArray].getRelease();
+        document.getElementById("rating").innerHTML = films[filmArray].getRating();
+        document.getElementById("cast").appendChild(ul);
+        for (let i = 0; i < cast.length; i++) {
+            let li = document.createElement("li");
+            ul.appendChild(li);
+            li.innerHTML = cast[i].getActeur();
+        }
+        for (let j = 0; j < genres.length; j++) {
+            if (j < genres.length - 1) {
+                document.getElementById("genres").insertAdjacentHTML("beforeend", genres[j].getGenre() + ", ");
+            } else {
+                document.getElementById("genres").insertAdjacentHTML("beforeend", genres[j].getGenre());
+            }
+        }
+        if (filmArray == 0) {
+            vorige.disabled = true;
+        }
+        if (filmArray == films.length - 1) {
+            volgende.disabled = true;
+        }
+        volgende.addEventListener("click", function () {
+            filmArray++;
+        });
     });
-let films = filmCollectie.getFilms();
-console.log(films);
-for (let film of films) {
-    document.getElementById("titel").innerHTML = film.getTitel();
-    document.getElementById("foto").src = "movies/" + film.getFoto();
-    document.getElementById("beschrijving").innerHTML = film.getBeschrijving();
-    document.getElementById("filmnr").innerHTML = film.getFilmNr();
-    document.getElementById("regisseur").innerHTML = film.getRegisseur();
-    document.getElementById("duurtijd").innerHTML = film.getDuur();
-    document.getElementById("release").innerHTML = film.getRelease();
-    document.getElementById("rating").innerHTML = film.getRating();
-}
