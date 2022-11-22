@@ -127,41 +127,55 @@ fetch('movies_nows.json')
                 }
             }
         }
-        let films = filmCollectie.getFilms();
-        let filmArray = 0;
+        let array = 0;
         let vorige = document.getElementById("vorige");
         let volgende = document.getElementById("volgende");
-        let cast = films[filmArray].getCast();
-        let genres = films[filmArray].getGenres();
-        let ul = document.createElement("ul");
-        document.getElementById("titel").innerHTML = films[filmArray].getTitel() + "<small>(" + films[filmArray].getFilmNr() + ")</small>";
-        document.getElementById("foto").src = "movies/" + films[filmArray].getFoto();
-        document.getElementById("foto").alt = films[filmArray].getTitel();
-        document.getElementById("beschrijving").innerHTML = films[filmArray].getBeschrijving();
-        document.getElementById("regisseur").innerHTML = films[filmArray].getRegisseur();
-        document.getElementById("duurtijd").innerHTML = films[filmArray].getDuur();
-        document.getElementById("release").innerHTML = films[filmArray].getRelease();
-        document.getElementById("rating").innerHTML = films[filmArray].getRating();
-        document.getElementById("cast").appendChild(ul);
-        for (let i = 0; i < cast.length; i++) {
-            let li = document.createElement("li");
-            ul.appendChild(li);
-            li.innerHTML = cast[i].getActeur();
-        }
-        for (let j = 0; j < genres.length; j++) {
-            if (j < genres.length - 1) {
-                document.getElementById("genres").insertAdjacentHTML("beforeend", genres[j].getGenre() + ", ");
+        volgende.addEventListener("click", function () {
+            array+=1;
+            visualize(array);
+        });
+        vorige.addEventListener("click", function () {
+            array-=1;
+            visualize(array);
+        });
+        function visualize(filmArray) {
+            let films = filmCollectie.getFilms();
+            let cast = films[filmArray].getCast();
+            let genres = films[filmArray].getGenres();
+            document.getElementById("cast").innerHTML = "";
+            document.getElementById("genres").innerHTML = "";
+            document.getElementById("titel").innerHTML = films[filmArray].getTitel() + "<small>(" + films[filmArray].getFilmNr() + ")</small>";
+            document.getElementById("foto").src = "movies/" + films[filmArray].getFoto();
+            document.getElementById("foto").alt = films[filmArray].getTitel();
+            document.getElementById("beschrijving").innerHTML = films[filmArray].getBeschrijving();
+            document.getElementById("regisseur").innerHTML = films[filmArray].getRegisseur();
+            document.getElementById("duurtijd").innerHTML = films[filmArray].getDuur();
+            document.getElementById("release").innerHTML = films[filmArray].getRelease();
+            document.getElementById("rating").innerHTML = films[filmArray].getRating();
+            let ul = document.createElement("ul");
+            document.getElementById("cast").appendChild(ul);
+            for (let i = 0; i < cast.length; i++) {
+                let li = document.createElement("li");
+                ul.appendChild(li);
+                li.innerHTML = cast[i].getActeur();
+            }
+            for (let j = 0; j < genres.length; j++) {
+                if (j < genres.length - 1) {
+                    document.getElementById("genres").insertAdjacentHTML("beforeend", genres[j].getGenre() + ", ");
+                } else {
+                    document.getElementById("genres").insertAdjacentHTML("beforeend", genres[j].getGenre());
+                }
+            }
+            if (filmArray == 0) {
+                vorige.disabled = true;
             } else {
-                document.getElementById("genres").insertAdjacentHTML("beforeend", genres[j].getGenre());
+                vorige.disabled = false;
+            }
+            if (filmArray == films.length - 1) {
+                volgende.disabled = true;
+            } else {
+                volgende.disabled = false;
             }
         }
-        if (filmArray == 0) {
-            vorige.disabled = true;
-        }
-        if (filmArray == films.length - 1) {
-            volgende.disabled = true;
-        }
-        volgende.addEventListener("click", function () {
-            filmArray++;
-        });
+        visualize(array);
     });
